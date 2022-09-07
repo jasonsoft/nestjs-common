@@ -1,0 +1,22 @@
+# source
+lib
+tests
+index.ts
+package-lock.json
+tslint.json
+tsconfig.json
+.prettierrc
+.eslintignore
+.eslintrc.js
+tsconfig.tsbuildinfo
+.vscode
+
+# github
+.github
+CONTRIBUTING.md
+renovate.json
+
+# ci
+.circleci
+
+rendering.jpg
