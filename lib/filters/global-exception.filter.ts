@@ -30,9 +30,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
   constructor(@Optional() options?: GlobalExceptionFilterOptions) {
     this.filterOptions = options || {};
-    if (this.filterOptions.displayRequestPath === undefined) {
-      this.filterOptions.displayRequestPath = true;
-    }
   }
 
   catch(exception: any, host: ArgumentsHost) {
