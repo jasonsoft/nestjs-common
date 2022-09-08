@@ -1,5 +1,6 @@
 import YamlConfig from './config/yaml-config';
 export { YamlConfig };
+export * from './interfaces';
 export * from './decorators';
 export * from './dto';
 export * from './filters';
@@ -8,3 +9,4 @@ export * from './utils';
 export * from './helpers';
 export * from './exceptions';
 export * from './pipes';
+export * from './entities';
