@@ -1,6 +1,6 @@
 {
   "name": "@jasonsoft/nestjs-common",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Nestjs common extension for Nest framework (node.js)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -33,6 +33,7 @@
   "homepage": "https://github.com/jasonsoft/nestjs-common#readme",
   "devDependencies": {
     "@nestjs/common": "9.0.11",
+    "@types/js-yaml": "^4.0.5",
     "@types/node": "16.11.56",
     "@typescript-eslint/eslint-plugin": "5.36.2",
     "@typescript-eslint/parser": "5.36.2",
@@ -53,5 +54,8 @@
     "class-validator": ">=0.10.0",
     "rxjs": ">=6.0.0",
     "typeorm": "^0.2.7 || ^0.3.0"
+  },
+  "dependencies": {
+    "js-yaml": "4.1.0"
   }
 }
