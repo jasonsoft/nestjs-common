@@ -1,3 +1,5 @@
+import YamlConfig from './config/yaml-config';
+export { YamlConfig };
 export * from './decorators';
 export * from './dto';
 export * from './filters';
