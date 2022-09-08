@@ -27,6 +27,11 @@ export class ExceptionFormatFilter implements ExceptionFilter {
   private static readonly logger = new Logger('ExceptionFormatFilter');
   protected filterOptions: ExceptionFormatFilterOptions;
 
+  /**
+   * constructor
+   * Added by Jason.Song (成长的小猪) on 2022/09/08 15:58:20
+   * @param options exception format options
+   */
   constructor(@Optional() options?: ExceptionFormatFilterOptions) {
     this.filterOptions = options || {};
   }

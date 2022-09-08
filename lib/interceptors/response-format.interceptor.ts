@@ -25,6 +25,11 @@ export class ResponseFormatInterceptor implements NestInterceptor {
   private static readonly logger = new Logger('ResponseFormatInterceptor');
   protected interceptorOptions: ResponseFormatInterceptorOptions;
 
+  /**
+   * constructor
+   * Added by Jason.Song (成长的小猪) on 2022/09/08 15:55:50
+   * @param options response format options
+   */
   constructor(@Optional() options?: ResponseFormatInterceptorOptions) {
     this.interceptorOptions = options || {};
   }
