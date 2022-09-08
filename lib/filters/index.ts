@@ -1,1 +1,1 @@
-export * from './global-exception.filter';
+export * from './exception-format.filter';

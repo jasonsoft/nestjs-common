@@ -9,26 +9,25 @@ import {
 } from '@nestjs/common';
 import { isObject } from '../utils/shared';
 
-export interface GlobalExceptionFilterOptions {
+export interface ExceptionFormatFilterOptions {
   /** Fixed response status code 200 */
   fixedResponseStatusCode200?: boolean;
   /** Support message as an array type */
   supportMessageAsArrayType?: boolean;
-  /** Display request path */
-  displayRequestPath?: boolean;
+  /** Display request method, path, execution time */
+  displayMethodPathTimestamp?: boolean;
 }
 
 /**
- * Global exception filter / 返回统一的JSON数据格式
- * Returns unified error message data format (JSON)
+ * Unified exception response format
  * Added by Jason.Song (成长的小猪) on 2021/11/10 14:35:29
  */
 @Catch()
-export class GlobalExceptionFilter implements ExceptionFilter {
-  private static readonly logger = new Logger('GlobalExceptionFilter');
-  protected filterOptions: GlobalExceptionFilterOptions;
+export class ExceptionFormatFilter implements ExceptionFilter {
+  private static readonly logger = new Logger('ExceptionFormatFilter');
+  protected filterOptions: ExceptionFormatFilterOptions;
 
-  constructor(@Optional() options?: GlobalExceptionFilterOptions) {
+  constructor(@Optional() options?: ExceptionFormatFilterOptions) {
     this.filterOptions = options || {};
   }
 
@@ -38,7 +37,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse();
 
     let httpStatus: number = HttpStatus.OK;
-    const payload: any = {};
+    const payload: { [key: string]: any } = {};
     if (exception instanceof HttpException || 'response' in exception) {
       const response: any = exception.getResponse();
       if (isObject(response)) {
@@ -62,17 +61,21 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       httpStatus = HttpStatus.BAD_REQUEST;
       payload.statusCode = HttpStatus.BAD_REQUEST;
       payload.message = exception.message;
-      GlobalExceptionFilter.logger.error(exception.message, exception.stack);
+      ExceptionFormatFilter.logger.error(exception.message, exception.stack);
     } else {
       httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
       payload.statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
       payload.message = 'Internal Server Error';
-      GlobalExceptionFilter.logger.error(exception);
+      ExceptionFormatFilter.logger.error(exception);
     }
 
-    if (this.filterOptions.displayRequestPath) {
-      payload.path = `${request.method} ${request.url}`;
-      payload.timestamp = new Date().toISOString();
+    if (this.filterOptions.displayMethodPathTimestamp) {
+      const meta = {
+        method: request.method,
+        path: request.path,
+        timestamp: new Date().toISOString(),
+      };
+      payload.meta = meta;
     }
 
     response
