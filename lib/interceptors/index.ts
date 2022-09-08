@@ -1,1 +1,1 @@
-export * from './global-response.interceptor';
+export * from './response-format.interceptor';
