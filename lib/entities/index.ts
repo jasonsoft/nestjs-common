@@ -1,2 +1,1 @@
-export * from './entity-with-id';
-export * from './entity-without-id';
+export * from './base.entity';
