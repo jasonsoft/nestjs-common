@@ -6,12 +6,6 @@ import { Column, Index } from 'typeorm';
  */
 export class EntityWithoutId {
   /**
-   * 删除标记
-   */
-  @Column({ default: false, select: false, comment: '删除标记' })
-  isDeleted!: boolean;
-
-  /**
    * 创建日期
    */
   @Index()
