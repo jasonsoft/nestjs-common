@@ -33,13 +33,15 @@
   "homepage": "https://github.com/jasonsoft/nestjs-common#readme",
   "devDependencies": {
     "@nestjs/common": "9.0.11",
-    "@types/js-yaml": "^4.0.5",
+    "@types/bcrypt": "5.0.0",
+    "@types/js-yaml": "4.0.5",
+    "@types/jsonwebtoken": "8.5.9",
     "@types/node": "16.11.56",
-    "@typescript-eslint/eslint-plugin": "5.36.2",
-    "@typescript-eslint/parser": "5.36.2",
+    "@typescript-eslint/eslint-plugin": "5.37.0",
+    "@typescript-eslint/parser": "5.37.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.13.2",
-    "eslint": "8.23.0",
+    "eslint": "8.23.1",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "4.2.1",
     "prettier": "2.7.1",
@@ -56,6 +58,8 @@
     "typeorm": "^0.2.7 || ^0.3.0"
   },
   "dependencies": {
-    "js-yaml": "4.1.0"
+    "bcrypt": "5.0.1",
+    "js-yaml": "4.1.0",
+    "jsonwebtoken": "8.5.1"
   }
 }
