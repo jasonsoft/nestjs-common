@@ -10,6 +10,7 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BYPASS_RESPONSE_FORMAT } from '../constants';
+import { ReflectorHelper } from '../helpers/reflector.helper';
 
 export interface ResponseFormatInterceptorOptions {
   /** Display request method, path, execution time */
@@ -36,10 +37,11 @@ export class ResponseFormatInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const start = Date.now();
-    const bypass = Reflect.getMetadata(
+    const handler = context.getHandler();
+    const bypass = ReflectorHelper.get<boolean>(
       BYPASS_RESPONSE_FORMAT,
-      context.getHandler(),
-    ) as boolean;
+      handler,
+    );
     const request = context.switchToHttp().getRequest();
     return next.handle().pipe(
       map((data) => {
