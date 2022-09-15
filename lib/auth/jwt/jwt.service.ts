@@ -18,6 +18,15 @@ export class JwtService {
     return jwt.sign(payload, this.options.secret, this.options.signOptions);
   }
 
+  createTokenAsync(payload: JwtUser): Promise<string | undefined> {
+    const signOptions = this.options.signOptions || {};
+    return new Promise((resolve, reject) =>
+      jwt.sign(payload, this.options.secret, signOptions, (err, token) =>
+        err ? reject(err) : resolve(token),
+      ),
+    );
+  }
+
   verifyToken(token: string): JwtUser {
     return jwt.verify(
       token,

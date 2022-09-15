@@ -28,20 +28,23 @@ export class JwtAuthGuard implements CanActivate {
     );
     if (!authorization) {
       throw new UnauthorizedException(
-        'You need to provide your API key in the Authorization header, e.g. Authorization: Bearer <Your API key>',
+        'You need to provide your Token in the Authorization header, e.g. Authorization: Bearer <Token>',
       );
     }
     try {
       const user = this.jwtService.verifyToken(authorization.value);
       Reflect.set(request, 'user', user);
-      const roles = ReflectorHelper.getAllAndOverride<any[]>(ROLES_KEY, [
-        handler,
-        classRef,
-      ]);
-      if (roles && roles.length) {
-        const hasRole = user && roles.some((role) => user.roles.includes(role));
-        if (!hasRole) {
-          throw new UnauthorizedException();
+      if (user && user.roles && user.roles.length) {
+        const userRoles = user.roles;
+        const roles = ReflectorHelper.getAllAndOverride<any[]>(ROLES_KEY, [
+          handler,
+          classRef,
+        ]);
+        if (roles && roles.length) {
+          const hasRole = roles.some((role) => userRoles.includes(role));
+          if (!hasRole) {
+            throw new UnauthorizedException();
+          }
         }
       }
     } catch {

@@ -9,8 +9,9 @@ export interface JwtUser {
   userId: string | number;
   /**
    * 用户角色
+   * 该属性不为空时，将用作角色验证
    */
-  roles: any[];
+  roles?: any[];
   /**
    * 用户名
    */
@@ -27,4 +28,7 @@ export interface JwtUser {
    * 公司名称
    */
   companyName?: string;
+
+  /** 扩展 */
+  extends?: object;
 }
