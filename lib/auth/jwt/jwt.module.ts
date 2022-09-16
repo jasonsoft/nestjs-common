@@ -9,7 +9,7 @@ import { JwtService } from './jwt.service';
 
 @Module({
   providers: [JwtService],
-  exports: [JwtService],
+  exports: [JwtService, JWT_MODULE_OPTIONS],
 })
 export class JwtModule {
   static register(options: JwtModuleOptions): DynamicModule {

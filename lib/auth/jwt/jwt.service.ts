@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
-import * as jwt from 'jsonwebtoken';
 import { JWT_MODULE_OPTIONS } from '../../constants';
+import { JwtHelper } from '../../helpers';
 import { JwtUser } from '../../interfaces';
 import { JwtModuleOptions } from './interfaces';
 
@@ -15,23 +15,31 @@ export class JwtService {
   ) {}
 
   createToken(payload: JwtUser) {
-    return jwt.sign(payload, this.options.secret, this.options.signOptions);
+    return JwtHelper.sign(
+      payload,
+      this.options.secret,
+      this.options.signOptions,
+    );
   }
 
   createTokenAsync(payload: JwtUser): Promise<string | undefined> {
     const signOptions = this.options.signOptions || {};
-    return new Promise((resolve, reject) =>
-      jwt.sign(payload, this.options.secret, signOptions, (err, token) =>
-        err ? reject(err) : resolve(token),
-      ),
-    );
+    return JwtHelper.signAsync(payload, this.options.secret, signOptions);
   }
 
   verifyToken(token: string): JwtUser {
-    return jwt.verify(
+    return JwtHelper.verify<JwtUser>(
       token,
       this.options.secret,
       this.options.verifyOptions,
-    ) as JwtUser;
+    );
+  }
+
+  verifyTokeAsync(token: string): Promise<JwtUser> {
+    return JwtHelper.verifyAsync<JwtUser>(
+      token,
+      this.options.secret,
+      this.options.verifyOptions,
+    );
   }
 }

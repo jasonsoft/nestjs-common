@@ -1,17 +1,26 @@
 import {
   CanActivate,
   ExecutionContext,
+  Inject,
   Injectable,
+  Optional,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '../auth';
-import { ANONYMOUS_KEY, ROLES_KEY } from '../constants';
+import { JwtModuleOptions } from '../auth';
+import { ANONYMOUS_KEY, JWT_MODULE_OPTIONS, ROLES_KEY } from '../constants';
+import { JwtHelper } from '../helpers';
 import { ReflectorHelper } from '../helpers/reflector.helper';
+import { JwtUser } from '../interfaces';
+import { parseAuthHeader } from '../utils';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
-  canActivate(context: ExecutionContext): boolean {
+  constructor(
+    @Optional()
+    @Inject(JWT_MODULE_OPTIONS)
+    protected options: JwtModuleOptions,
+  ) {}
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const handler = context.getHandler();
     const classRef = context.getClass();
@@ -23,19 +32,22 @@ export class JwtAuthGuard implements CanActivate {
     ) {
       return true;
     }
-    const authorization = this.parseAuthHeader(
-      request.headers['authorization'],
-    );
+    const authorization = parseAuthHeader(request.headers['authorization']);
     if (!authorization) {
       throw new UnauthorizedException(
         'You need to provide your Token in the Authorization header, e.g. Authorization: Bearer <Token>',
       );
     }
     try {
-      const user = this.jwtService.verifyToken(authorization.value);
-      Reflect.set(request, 'user', user);
-      if (user && user.roles && user.roles.length) {
-        const userRoles = user.roles;
+      const token = authorization.token;
+      const payload = await JwtHelper.verifyAsync<JwtUser>(
+        token,
+        this.options.secret,
+        this.options.verifyOptions,
+      );
+      Reflect.set(request, 'user', payload);
+      if (payload && payload.roles && payload.roles.length) {
+        const userRoles = payload.roles;
         const roles = ReflectorHelper.getAllAndOverride<any[]>(ROLES_KEY, [
           handler,
           classRef,
@@ -47,22 +59,15 @@ export class JwtAuthGuard implements CanActivate {
           }
         }
       }
+
+      return await this.validate(token, payload);
     } catch {
       throw new UnauthorizedException();
     }
-
-    return true;
   }
 
-  parseAuthHeader(value?: string): {
-    scheme: string;
-    value: string;
-  } | null {
-    if (!value) {
-      return null;
-    }
-    const re = /(\S+)\s+(\S+)/;
-    const matches = value.match(re);
-    return matches && { scheme: matches[1], value: matches[2] };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async validate(token: string, payload: JwtUser): Promise<boolean> {
+    return Promise.resolve(true);
   }
 }
