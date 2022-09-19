@@ -23,7 +23,7 @@ export interface JwtUser {
   /**
    * 公司ID
    */
-  companyId?: string;
+  companyId?: string | number;
   /**
    * 公司名称
    */
