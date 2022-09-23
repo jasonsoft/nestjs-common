@@ -13,6 +13,8 @@ import { BYPASS_RESPONSE_FORMAT } from '../constants';
 import { ReflectorHelper } from '../helpers/reflector.helper';
 
 export interface ResponseFormatInterceptorOptions {
+  /** Fixed response status code 200 */
+  fixedResponseStatusCode200?: boolean;
   /** Display request method, path, execution time */
   displayMethodPathExecutionTime?: boolean;
 }
@@ -43,8 +45,14 @@ export class ResponseFormatInterceptor implements NestInterceptor {
       handler,
     );
     const request = context.switchToHttp().getRequest();
+    const response = context.switchToHttp().getResponse();
+
     return next.handle().pipe(
       map((data) => {
+        if (this.interceptorOptions.fixedResponseStatusCode200) {
+          response.status(HttpStatus.OK);
+        }
+
         if (bypass) {
           return data;
         }
