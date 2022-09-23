@@ -9,13 +9,13 @@ import { JwtService } from './jwt.service';
 
 @Module({
   providers: [JwtService],
-  exports: [JwtService, JWT_MODULE_OPTIONS],
+  exports: [JWT_MODULE_OPTIONS, JwtService],
 })
 export class JwtModule {
   static register(options: JwtModuleOptions): DynamicModule {
     return {
       module: JwtModule,
-      global: options.isGlobal,
+      global: true,
       providers: [{ provide: JWT_MODULE_OPTIONS, useValue: options || {} }],
     };
   }
