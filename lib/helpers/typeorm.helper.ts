@@ -1,4 +1,4 @@
-import { SelectQueryBuilder } from 'typeorm';
+import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { ConditionsDto, PaginationDto } from '../dto';
 import { AndOr, Operator } from '../enums';
 import { convertOperator } from '../utils';
@@ -15,7 +15,7 @@ export class TypeOrmHelper {
    * @param conditions  conditions dto
    * @param pagination  pagination dto
    */
-  public static BuildQueryConditions<Entity>(
+  public static BuildQueryConditions<Entity extends ObjectLiteral>(
     builder: SelectQueryBuilder<Entity>,
     conditions?: ConditionsDto,
     pagination?: PaginationDto,
@@ -54,7 +54,7 @@ export class TypeOrmHelper {
         }
       }
 
-      if (conditions.by) {
+      if (conditions.by && conditions.by.sort) {
         const sort = conditions.by.sort.includes('.')
           ? conditions.by.sort
           : `${alias}.${conditions.by.sort}`;
