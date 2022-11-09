@@ -10,6 +10,9 @@ export const convertOperator = (operator: Operator): string | undefined => {
     case Operator.Equal:
       op = '=';
       break;
+    case Operator.Not:
+      op = '!=';
+      break;
     case Operator.MoreThan:
       op = '>';
       break;
@@ -30,9 +33,6 @@ export const convertOperator = (operator: Operator): string | undefined => {
       break;
     case Operator.In:
       op = 'in';
-      break;
-    case Operator.Not:
-      op = '!=';
       break;
 
     default:

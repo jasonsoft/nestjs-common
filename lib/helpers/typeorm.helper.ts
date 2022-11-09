@@ -1,6 +1,6 @@
 import { ObjectLiteral, SelectQueryBuilder } from 'typeorm';
 import { ConditionsDto, PaginationDto } from '../dto';
-import { AndOr, Operator } from '../enums';
+import { Operator } from '../enums';
 import { convertOperator } from '../utils';
 
 /**
@@ -22,7 +22,7 @@ export class TypeOrmHelper {
   ): SelectQueryBuilder<Entity> {
     const alias = builder.alias;
     if (conditions) {
-      if (conditions.join === AndOr.And) {
+      if (conditions.where && Array.isArray(conditions.where)) {
         for (const item of conditions.where) {
           const op = convertOperator(item.op);
           if (!op) continue;
@@ -58,7 +58,7 @@ export class TypeOrmHelper {
         const sort = conditions.by.sort.includes('.')
           ? conditions.by.sort
           : `${alias}.${conditions.by.sort}`;
-        builder.orderBy(sort, conditions.by.order || 'DESC');
+        builder.orderBy(sort, conditions.by.order || 'ASC');
       }
     }
 

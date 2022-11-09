@@ -9,25 +9,22 @@ interface IConditionsOptions {
 }
 
 /**
- * 查询条件
+ * Query conditions decorator
  * Added by Jason.Song on 2021/05/13 16:04:38
  */
 export const Conditions = createParamDecorator(
   async (options: IConditionsOptions = {}, ctx: ExecutionContext) => {
     const opt = Object.assign({ key: 'conditions' }, options);
     const request = ctx.switchToHttp().getRequest();
-    let obj: any;
-    const query = request?.query?.[opt.key];
-    if (query) {
-      const conditions = JSON.parse(query);
-      if ('join' in conditions) {
-        obj = conditions;
-      }
+    let conditions: any;
+    const queryParams = request?.query?.[opt.key];
+    if (queryParams) {
+      conditions = JSON.parse(queryParams);
     }
-    const conditions = request?.body?.[opt.key] || {};
-    if ('join' in conditions) {
-      obj = conditions;
+    const bodyParams = request?.body?.[opt.key];
+    if (bodyParams) {
+      conditions = bodyParams;
     }
-    return obj;
+    return conditions;
   },
 );

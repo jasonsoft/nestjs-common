@@ -27,5 +27,6 @@ export class PaginationDto {
   /**
    * 默认最大限制200条记录
    */
+  @Expose({ toClassOnly: true })
   maxLimit = 200;
 }
