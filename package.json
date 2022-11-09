@@ -32,24 +32,24 @@
   },
   "homepage": "https://github.com/jasonsoft/nestjs-common#readme",
   "devDependencies": {
-    "@nestjs/common": "9.1.2",
+    "@nestjs/common": "9.2.0",
     "@types/bcrypt": "5.0.0",
     "@types/js-yaml": "4.0.5",
     "@types/jsonwebtoken": "8.5.9",
-    "@types/node": "16.11.56",
-    "@types/uuid": "^8.3.4",
-    "@typescript-eslint/eslint-plugin": "5.38.0",
-    "@typescript-eslint/parser": "5.38.0",
+    "@types/node": "18.11.9",
+    "@types/uuid": "8.3.4",
+    "@typescript-eslint/eslint-plugin": "5.42.1",
+    "@typescript-eslint/parser": "5.42.1",
     "class-transformer": "0.5.1",
     "class-validator": "0.13.2",
-    "eslint": "8.23.1",
+    "eslint": "8.27.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "4.2.1",
     "prettier": "2.7.1",
     "rimraf": "3.0.2",
     "rxjs": "7.5.6",
     "typeorm": "0.3.10",
-    "typescript": "4.7.4"
+    "typescript": "4.8.4"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0 || ^8.0.0 || ^9.0.0",
@@ -60,7 +60,7 @@
     "uuid": "^8.0.0 || ^9.0.0"
   },
   "dependencies": {
-    "bcrypt": "5.0.1",
+    "bcrypt": "5.1.0",
     "js-yaml": "4.1.0",
     "jsonwebtoken": "8.5.1"
   }
