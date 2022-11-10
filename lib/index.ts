@@ -12,3 +12,4 @@ export * from './exceptions';
 export * from './pipes';
 export * from './entities';
 export * from './auth';
+export * from './enums';
