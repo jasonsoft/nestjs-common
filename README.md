@@ -5,7 +5,7 @@
 
 # nestjs-common
 
-Nestjs common extension for Nest framework (node.js) 🐷
+Nestjs common extension for Nest framework (node.js) 🌶️
 
 [![NPM version][npm-img]][npm-url]
 [![NPM Downloads][downloads-image]][npm-url]
