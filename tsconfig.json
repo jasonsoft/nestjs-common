@@ -16,5 +16,5 @@
     "skipLibCheck": true
   },
   "include": [".eslintrc.js", "./lib/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts", "tests"]
+  "exclude": ["node_modules"]
 }

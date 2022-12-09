@@ -5,12 +5,12 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf -rf dist && tsc -p tsconfig.json",
+    "build": "rimraf -rf dist && tsc -p tsconfig.build.json",
     "format": "prettier **/**/*.ts --ignore-path ./.prettierignore --write",
     "lint": "eslint 'lib/**/*.ts' --fix",
     "prepublish:npm": "npm run build",
     "publish:npm": "npm publish --access public",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,10 @@
     "nestjs",
     "common",
     "typeorm",
-    "pagination"
+    "pagination",
+    "jwt",
+    "authorization",
+    "authentication"
   ],
   "author": "Jason Song (成长的小猪)",
   "license": "MIT",
@@ -32,24 +35,27 @@
   },
   "homepage": "https://github.com/jasonsoft/nestjs-common#readme",
   "devDependencies": {
-    "@nestjs/common": "9.2.0",
+    "@nestjs/common": "9.2.1",
     "@types/bcrypt": "5.0.0",
+    "@types/jest": "^29.2.4",
     "@types/js-yaml": "4.0.5",
     "@types/jsonwebtoken": "8.5.9",
-    "@types/node": "18.11.9",
-    "@types/uuid": "8.3.4",
-    "@typescript-eslint/eslint-plugin": "5.42.1",
-    "@typescript-eslint/parser": "5.42.1",
+    "@types/node": "18.11.12",
+    "@types/uuid": "9.0.0",
+    "@typescript-eslint/eslint-plugin": "5.46.0",
+    "@typescript-eslint/parser": "5.46.0",
     "class-transformer": "0.5.1",
     "class-validator": "0.13.2",
-    "eslint": "8.27.0",
+    "eslint": "8.29.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-prettier": "4.2.1",
-    "prettier": "2.7.1",
+    "jest": "^29.3.1",
+    "prettier": "2.8.1",
     "rimraf": "3.0.2",
-    "rxjs": "7.5.6",
-    "typeorm": "0.3.10",
-    "typescript": "4.8.4"
+    "rxjs": "7.6.0",
+    "ts-jest": "^29.0.3",
+    "typeorm": "0.3.11",
+    "typescript": "4.9.4"
   },
   "peerDependencies": {
     "@nestjs/common": "^7.0.0 || ^8.0.0 || ^9.0.0",
@@ -63,5 +69,22 @@
     "bcrypt": "5.1.0",
     "js-yaml": "4.1.0",
     "jsonwebtoken": "8.5.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "lib",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
   }
 }
