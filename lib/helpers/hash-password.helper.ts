@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
  * use bcrypt to hash a random password
  * Added by Jason.Song (成长的小猪) on 2022/09/13 15:59:24
  */
-export class HashHelper {
+export class HashPasswordHelper {
   private static saltOrRounds = 10;
 
   /**
