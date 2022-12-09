@@ -2,6 +2,7 @@ import * as crypto from 'crypto';
 
 /**
  * AES crypto helper
+ * aes-128-ecb
  * Added by Jason.Song (成长的小猪) on 2022/12/08 14:42:36
  */
 export class AesCryptoHelper {
