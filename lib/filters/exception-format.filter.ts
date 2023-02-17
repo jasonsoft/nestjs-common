@@ -7,7 +7,6 @@ import {
   Logger,
   Optional,
 } from '@nestjs/common';
-import { isObject } from '../utils/shared';
 
 export interface ExceptionFormatFilterOptions {
   /** Fixed response status code 200 */
@@ -43,34 +42,39 @@ export class ExceptionFormatFilter implements ExceptionFilter {
 
     let httpStatus: number = HttpStatus.OK;
     const payload: { [key: string]: any } = {};
-    if (exception instanceof HttpException || 'response' in exception) {
+    if (
+      typeof exception === 'object' &&
+      (exception instanceof HttpException || 'response' in exception)
+    ) {
+      httpStatus = exception.getStatus();
       const response: any = exception.getResponse();
-      if (isObject(response)) {
-        httpStatus = exception.getStatus();
-        if ('statusCode' in response && 'message' in response) {
-          payload.statusCode = response['statusCode'];
-          const message = response['message'];
-          payload.message = this.filterOptions.supportMessageAsArrayType
-            ? message
-            : Array.isArray(message)
-            ? message[0]
-            : message;
-        } else {
-          Object.assign(payload, response);
-        }
+      if ('statusCode' in response && 'message' in response) {
+        Object.assign(payload, response);
+        const message = response['message'];
+        payload.message = this.filterOptions.supportMessageAsArrayType
+          ? message
+          : Array.isArray(message)
+          ? message[0]
+          : message;
       } else {
-        payload.statusCode = exception.getStatus();
-        payload.message = response;
+        payload.statusCode = httpStatus;
+        Object.assign(payload, response);
       }
     } else if (exception instanceof Error) {
       httpStatus = HttpStatus.BAD_REQUEST;
       payload.statusCode = HttpStatus.BAD_REQUEST;
       payload.message = exception.message;
+      payload.error = 'Bad Request';
       ExceptionFormatFilter.logger.error(exception.message, exception.stack);
     } else {
+      let message = 'Internal Server Error';
+      if (typeof exception === 'string') {
+        message = exception;
+      }
       httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
       payload.statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-      payload.message = 'Internal Server Error';
+      payload.message = message;
+      payload.error = 'Internal Server Error';
       ExceptionFormatFilter.logger.error(exception);
     }
 
