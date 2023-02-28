@@ -1,5 +1,6 @@
 import YamlConfig from './config/yaml-config';
-export { YamlConfig };
+import MemoryCacheHelper from './helpers/memory-cache-helper';
+export { YamlConfig, MemoryCacheHelper };
 export * from './interfaces';
 export * from './decorators';
 export * from './dto';
