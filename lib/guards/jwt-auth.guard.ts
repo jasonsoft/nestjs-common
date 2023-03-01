@@ -3,7 +3,6 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
-  Optional,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtModuleOptions } from '../auth';
@@ -13,13 +12,23 @@ import { ReflectorHelper } from '../helpers/reflector.helper';
 import { JwtUser } from '../interfaces';
 import { parseAuthHeader } from '../utils';
 
+/**
+ *
+ * Added by Jason.Song (成长的小猪) on 2023/03/01 23:22:51
+ */
+export interface AuthExtendedOptions {
+  request: any;
+}
+
+/**
+ *
+ * Updated by Jason.Song (成长的小猪) on 2023/03/01 23:18:46
+ */
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(
-    @Optional()
-    @Inject(JWT_MODULE_OPTIONS)
-    protected options: JwtModuleOptions,
-  ) {}
+  @Inject(JWT_MODULE_OPTIONS)
+  protected options!: JwtModuleOptions;
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const handler = context.getHandler();
@@ -34,13 +43,29 @@ export class JwtAuthGuard implements CanActivate {
     }
     const authorization = parseAuthHeader(request.headers['authorization']);
     if (!authorization) {
+      const mixedAuthHeaders = this.options.mixedAuthHeaders;
+      if (mixedAuthHeaders) {
+        const headers =
+          typeof mixedAuthHeaders === 'string'
+            ? [mixedAuthHeaders]
+            : mixedAuthHeaders;
+        if (headers.length > 0) {
+          for (const name of headers) {
+            const apiKey = request.headers[name.toLowerCase()];
+            if (apiKey) {
+              return this.validate(apiKey, undefined, { request });
+            }
+          }
+        }
+      }
       throw new UnauthorizedException(
         'You need to provide your Token in the Authorization header, e.g. Authorization: Bearer <Token>',
       );
     }
+    const token = authorization.token;
+    let payload: JwtUser;
     try {
-      const token = authorization.token;
-      const payload = await JwtHelper.verifyAsync<JwtUser>(
+      payload = await JwtHelper.verifyAsync<JwtUser>(
         token,
         this.options.secret,
         this.options.verifyOptions,
@@ -59,15 +84,22 @@ export class JwtAuthGuard implements CanActivate {
           }
         }
       }
-
-      return await this.validate(token, payload);
     } catch {
       throw new UnauthorizedException();
     }
+    return this.validate(token, payload, { request });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async validate(token: string, payload: JwtUser): Promise<boolean> {
-    return Promise.resolve(true);
+  /**
+   *
+   * Updated by Jason.Song (成长的小猪) on 2023/03/01 23:27:01
+   */
+  async validate(
+    token: string,
+    payload?: JwtUser,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    extendedOptions?: AuthExtendedOptions,
+  ): Promise<boolean> {
+    return Promise.resolve(payload ? true : false);
   }
 }

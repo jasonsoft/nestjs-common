@@ -5,6 +5,7 @@ export interface JwtModuleOptions {
   secret: string | Buffer;
   signOptions?: jwt.SignOptions;
   verifyOptions?: jwt.VerifyOptions;
+  mixedAuthHeaders?: string | string[];
 }
 
 export interface JwtOptionsFactory {
