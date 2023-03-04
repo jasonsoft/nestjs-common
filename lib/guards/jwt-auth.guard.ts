@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   CanActivate,
   ExecutionContext,
@@ -13,15 +14,15 @@ import { JwtUser } from '../interfaces';
 import { parseAuthHeader } from '../utils';
 
 /**
- *
- * Added by Jason.Song (成长的小猪) on 2023/03/01 23:22:51
+ * JWT extension options
+ * Added by Jason.Song (成长的小猪) on 2023/03/04 22:49:28
  */
-export interface AuthExtendedOptions {
+export interface JwtExtensionOptions {
   request: any;
 }
 
 /**
- *
+ *  JWT Guard
  * Updated by Jason.Song (成长的小猪) on 2023/03/01 23:18:46
  */
 @Injectable()
@@ -41,34 +42,44 @@ export class JwtAuthGuard implements CanActivate {
     ) {
       return true;
     }
-    const authorization = parseAuthHeader(request.headers['authorization']);
-    if (!authorization) {
-      const mixedAuthHeaders = this.options.mixedAuthHeaders;
-      if (mixedAuthHeaders) {
-        const headers =
-          typeof mixedAuthHeaders === 'string'
-            ? [mixedAuthHeaders]
-            : mixedAuthHeaders;
-        if (headers.length > 0) {
-          for (const name of headers) {
-            const apiKey = request.headers[name.toLowerCase()];
-            if (apiKey) {
-              return this.validate(apiKey, undefined, { request });
-            }
-          }
+
+    let authHeaderValue:
+      | {
+          scheme: string;
+          token: string;
         }
+      | null
+      | undefined;
+    const headers = ['authorization'];
+    const mixedAuthHeaders = this.options.mixedAuthHeaders;
+    if (mixedAuthHeaders) {
+      if (typeof mixedAuthHeaders === 'string') {
+        headers.push(mixedAuthHeaders);
+      } else {
+        headers.push(...mixedAuthHeaders);
       }
+    }
+
+    for (const name of headers) {
+      const value: string = request.headers[name.toLowerCase()];
+      if (value) {
+        authHeaderValue =
+          name === 'authorization'
+            ? parseAuthHeader(value)
+            : { scheme: name, token: value };
+        break;
+      }
+    }
+    if (!authHeaderValue) {
       throw new UnauthorizedException(
         'You need to provide your Token in the Authorization header, e.g. Authorization: Bearer <Token>',
       );
     }
-    const token = authorization.token;
     let payload: JwtUser;
     try {
-      payload = await JwtHelper.verifyAsync<JwtUser>(
-        token,
-        this.options.secret,
-        this.options.verifyOptions,
+      payload = await this.decryptToken(
+        authHeaderValue.scheme,
+        authHeaderValue.token,
       );
       Reflect.set(request, 'user', payload);
       if (payload && payload.roles && payload.roles.length) {
@@ -87,19 +98,30 @@ export class JwtAuthGuard implements CanActivate {
     } catch {
       throw new UnauthorizedException();
     }
-    return this.validate(token, payload, { request });
+    return this.validate(authHeaderValue.token, payload, { request });
   }
 
   /**
-   *
+   * decrypt token
+   * Added by Jason.Song (成长的小猪) on 2023/03/04 22:18:29
+   */
+  async decryptToken(scheme: string, token: string): Promise<JwtUser> {
+    return JwtHelper.verifyAsync<JwtUser>(
+      token,
+      this.options.secret,
+      this.options.verifyOptions,
+    );
+  }
+
+  /**
+   * validate
    * Updated by Jason.Song (成长的小猪) on 2023/03/01 23:27:01
    */
   async validate(
     token: string,
-    payload?: JwtUser,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    extendedOptions?: AuthExtendedOptions,
+    payload: JwtUser,
+    extensionOptions?: JwtExtensionOptions,
   ): Promise<boolean> {
-    return Promise.resolve(payload ? true : false);
+    return Promise.resolve(true);
   }
 }
