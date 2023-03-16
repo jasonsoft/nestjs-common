@@ -19,6 +19,16 @@ import { parseAuthHeader } from '../utils';
  */
 export interface JwtExtensionOptions {
   request: any;
+  authHeaderValue: AuthHeaderValue;
+}
+
+/**
+ * Authorization header value
+ * Added by Jason.Song (成长的小猪) on 2023/03/16 23:17:29
+ */
+export interface AuthHeaderValue {
+  scheme: string;
+  token: string;
 }
 
 /**
@@ -43,13 +53,7 @@ export class JwtAuthGuard implements CanActivate {
       return true;
     }
 
-    let authHeaderValue:
-      | {
-          scheme: string;
-          token: string;
-        }
-      | null
-      | undefined;
+    let authHeaderValue: AuthHeaderValue | null | undefined;
     const headers = ['authorization'];
     const mixedAuthHeaders = this.options.mixedAuthHeaders;
     if (mixedAuthHeaders) {
@@ -98,7 +102,7 @@ export class JwtAuthGuard implements CanActivate {
     } catch {
       throw new UnauthorizedException();
     }
-    return this.validate(authHeaderValue.token, payload, { request });
+    return this.validate(payload, { request, authHeaderValue });
   }
 
   /**
@@ -114,11 +118,10 @@ export class JwtAuthGuard implements CanActivate {
   }
 
   /**
-   * validate
-   * Updated by Jason.Song (成长的小猪) on 2023/03/01 23:27:01
+   * Extended Validation
+   * Updated by Jason.Song (成长的小猪) on 2023/03/16 23:35:03
    */
   async validate(
-    token: string,
     payload: JwtUser,
     extensionOptions?: JwtExtensionOptions,
   ): Promise<boolean> {
