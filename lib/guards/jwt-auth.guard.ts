@@ -7,7 +7,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtModuleOptions } from '../auth';
-import { ANONYMOUS_KEY, JWT_MODULE_OPTIONS, ROLES_KEY } from '../constants';
+import {
+  ANONYMOUS_METADATA,
+  JWT_MODULE_OPTIONS,
+  ROLES_METADATA,
+} from '../constants';
 import { JwtHelper } from '../helpers';
 import { ReflectorHelper } from '../helpers/reflector.helper';
 import { JwtUser } from '../interfaces';
@@ -45,7 +49,7 @@ export class JwtAuthGuard implements CanActivate {
     const handler = context.getHandler();
     const classRef = context.getClass();
     if (
-      ReflectorHelper.getAllAndOverride<boolean>(ANONYMOUS_KEY, [
+      ReflectorHelper.getAllAndOverride<boolean>(ANONYMOUS_METADATA, [
         handler,
         classRef,
       ])
@@ -88,12 +92,16 @@ export class JwtAuthGuard implements CanActivate {
       Reflect.set(request, 'user', payload);
       if (payload && payload.roles && payload.roles.length) {
         const userRoles = payload.roles;
-        const roles = ReflectorHelper.getAllAndOverride<any[]>(ROLES_KEY, [
-          handler,
-          classRef,
-        ]);
+        const roles = ReflectorHelper.getAllAndOverride<string[]>(
+          ROLES_METADATA,
+          [handler, classRef],
+        );
         if (roles && roles.length) {
-          const hasRole = roles.some((role) => userRoles.includes(role));
+          const hasRole = roles.some((role) =>
+            Array.isArray(userRoles)
+              ? userRoles.includes(role)
+              : userRoles === role,
+          );
           if (!hasRole) {
             throw new UnauthorizedException();
           }

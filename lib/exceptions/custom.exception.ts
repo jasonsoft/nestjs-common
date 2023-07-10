@@ -16,7 +16,7 @@ export class CustomException extends HttpException {
     description?: string,
   ) {
     super(
-      HttpException.createBody(message, description, statusCode),
+      HttpException.createBody(message, description || '', statusCode),
       statusCode,
     );
   }

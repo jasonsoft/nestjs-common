@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { BYPASS_RESPONSE_FORMAT } from '../constants';
+import { BYPASS_RESPONSE_FORMAT_METADATA } from '../constants';
 import { ReflectorHelper } from '../helpers/reflector.helper';
 
 export interface ResponseFormatInterceptorOptions {
@@ -41,7 +41,7 @@ export class ResponseFormatInterceptor implements NestInterceptor {
     const start = Date.now();
     const handler = context.getHandler();
     const bypass = ReflectorHelper.get<boolean>(
-      BYPASS_RESPONSE_FORMAT,
+      BYPASS_RESPONSE_FORMAT_METADATA,
       handler,
     );
     const request = context.switchToHttp().getRequest();
