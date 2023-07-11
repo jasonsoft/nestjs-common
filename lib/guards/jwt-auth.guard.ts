@@ -15,7 +15,7 @@ import {
 import { JwtHelper } from '../helpers';
 import { ReflectorHelper } from '../helpers/reflector.helper';
 import { JwtUser } from '../interfaces';
-import { parseAuthHeader } from '../utils';
+import { getClientIp, parseAuthHeader } from '../utils';
 
 /**
  * JWT extension options
@@ -89,6 +89,7 @@ export class JwtAuthGuard implements CanActivate {
         authHeaderValue.scheme,
         authHeaderValue.token,
       );
+      payload.clientIp = getClientIp(request);
       Reflect.set(request, 'user', payload);
       if (payload && payload.roles && payload.roles.length) {
         const userRoles = payload.roles;
@@ -126,7 +127,7 @@ export class JwtAuthGuard implements CanActivate {
   }
 
   /**
-   * Extended Validation
+   * Jwt extended authentication
    * Updated by Jason.Song (成长的小猪) on 2023/03/16 23:35:03
    */
   async validate(
