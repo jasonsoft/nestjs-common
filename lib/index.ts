@@ -1,6 +1,7 @@
 import YamlConfig from './config/yaml-config';
 import MemoryCacheHelper from './helpers/memory-cache.helper';
-export { YamlConfig, MemoryCacheHelper };
+import NP from './utils/number-precision';
+export { YamlConfig, MemoryCacheHelper, NP };
 export * from './interfaces';
 export * from './decorators';
 export * from './dto';
