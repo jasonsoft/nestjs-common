@@ -99,10 +99,12 @@ export class AesCryptoHelper {
     if (!key) {
       throw new Error('key should not be empty');
     }
-    if (key.length !== 16) {
-      throw new Error('key must be equal to 16 characters');
-    }
-    const decipher = crypto.createDecipheriv('aes-128-ecb', key, '');
+    // if (key.length !== 16) {
+    //   throw new Error('key must be equal to 16 characters');
+    // }
+    const cipherKey =
+      key.length > 16 ? key.substring(0, 16) : key.padEnd(16, '0');
+    const decipher = crypto.createDecipheriv('aes-128-ecb', cipherKey, '');
     let plaintext = decipher.update(ciphertext, encoding, 'utf-8');
     plaintext += decipher.final('utf-8');
     return plaintext;
