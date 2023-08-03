@@ -15,8 +15,12 @@ export enum Operator {
   LessThan = 'lessThan',
   /** <= */
   LessThanOrEqual = 'lessThanOrEqual',
-  /** LIKE */
+  /** LIKE '%Jason Song%' */
   Like = 'like',
+  /** LIKE 'Song%' */
+  SLike = 'sLike',
+  /** LIKE '%Jason' */
+  ELike = 'eLike',
   /** BETWEEN */
   Between = 'between',
   /** IN */

@@ -36,10 +36,20 @@ export class TypeOrmHelper {
                 .setParameter('v1', item.value[0])
                 .setParameter('v2', item.value[1]);
             }
-          } else if (item.op === Operator.Like) {
+          } else if (
+            item.op === Operator.Like ||
+            item.op === Operator.SLike ||
+            item.op === Operator.ELike
+          ) {
+            let value = `%${item.value}%`;
+            if (item.op === Operator.SLike) {
+              value = `${item.value}%`;
+            } else if (item.op === Operator.ELike) {
+              value = `%${item.value}`;
+            }
             builder
               .andWhere(`${whereField} ${op} :${item.field}`)
-              .setParameter(item.field, '%' + item.value + '%');
+              .setParameter(item.field, value);
           } else if (item.op === Operator.In) {
             if (Array.isArray(item.value) && item.value.length) {
               builder

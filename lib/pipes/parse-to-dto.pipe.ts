@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { ClassTransformOptions, plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
-import { isNil } from '../utils';
 
 export interface ParseToDtoPipeOptions {
   transformOptions?: ClassTransformOptions;
@@ -30,10 +29,9 @@ export class ParseToDtoPipe implements PipeTransform<any> {
 
   public async transform(value: any, metadata: ArgumentMetadata) {
     const { metatype } = metadata;
-    if (!metatype) {
+    if (!metatype || typeof value !== 'object') {
       return value;
     }
-    value = isNil(value) ? {} : value;
     const object = plainToClass(metatype, value, this.transformOptions);
     const errors = await validate(object);
     if (errors.length > 0) {

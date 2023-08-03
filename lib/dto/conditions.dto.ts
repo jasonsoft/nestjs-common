@@ -21,7 +21,7 @@ export class ConditionsDto {
   @IsArray()
   @Type(() => WhereCondition)
   @ValidateNested({ each: true })
-  where: WhereCondition[] = [];
+  where: WhereCondition[];
 
   /** order condition for ORDER BY in sql */
   @Expose()
@@ -30,6 +30,10 @@ export class ConditionsDto {
   @Type(() => OrderByCondition)
   @ValidateNested()
   by?: Partial<OrderByCondition>;
+
+  constructor() {
+    this.where = [];
+  }
 }
 
 /**
@@ -48,6 +52,8 @@ export class OrderByCondition {
   order?: Order;
 }
 
+export type ConditionValue = string | number | boolean | string[] | number[];
+
 /**
  * Where condition for WHERE in sql
  * Added by Jason.Song on 2021/05/13 15:28:41
@@ -59,7 +65,7 @@ export class WhereCondition {
 
   @Expose()
   @IsNotEmpty()
-  value!: string | number | boolean | string[] | number[];
+  value!: ConditionValue;
 
   @Expose()
   @IsOptional()

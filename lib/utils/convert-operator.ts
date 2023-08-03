@@ -26,6 +26,8 @@ export const convertOperator = (operator: Operator): string | undefined => {
       op = '<=';
       break;
     case Operator.Like:
+    case Operator.SLike:
+    case Operator.ELike:
       op = 'like';
       break;
     case Operator.Between:
