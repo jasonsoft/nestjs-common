@@ -45,7 +45,11 @@ export class JwtAuthGuard implements CanActivate {
   protected options!: JwtModuleOptions;
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const startTime = Date.now();
     const request = context.switchToHttp().getRequest();
+    if (!request.startTime) {
+      request.startTime = startTime;
+    }
     const handler = context.getHandler();
     const classRef = context.getClass();
     if (

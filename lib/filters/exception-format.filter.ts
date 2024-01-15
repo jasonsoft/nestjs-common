@@ -7,6 +7,7 @@ import {
   Logger,
   Optional,
 } from '@nestjs/common';
+import { uuid } from '../utils';
 
 export interface ExceptionFormatFilterOptions {
   /** Fixed response status code 200 */
@@ -14,7 +15,9 @@ export interface ExceptionFormatFilterOptions {
   /** Support message as an array type */
   supportMessageAsArrayType?: boolean;
   /** Display request method, path, execution time */
-  displayMethodPathTimestamp?: boolean;
+  displayMethodPathExecutionTime?: boolean;
+  /** Transaction ID header */
+  transactionIdHeader?: string;
 }
 
 /**
@@ -39,6 +42,13 @@ export class ExceptionFormatFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest();
     const response = ctx.getResponse();
+    const transactionIdHeaderName =
+      this.filterOptions.transactionIdHeader || 'x-transaction-id';
+    let transactionId = request.headers[transactionIdHeaderName.toLowerCase()];
+    if (!transactionId) {
+      transactionId = uuid();
+    }
+    response.setHeader(transactionIdHeaderName, transactionId);
 
     let httpStatus: number = HttpStatus.OK;
     const payload: { [key: string]: any } = {};
@@ -78,11 +88,14 @@ export class ExceptionFormatFilter implements ExceptionFilter {
       ExceptionFormatFilter.logger.error(exception);
     }
 
-    if (this.filterOptions.displayMethodPathTimestamp) {
+    if (this.filterOptions.displayMethodPathExecutionTime) {
+      const startTime = request.startTime;
       const meta = {
         method: request.method,
         path: request.path,
         timestamp: new Date().toISOString(),
+        executionTime: startTime ? Date.now() - startTime : undefined,
+        transactionId,
       };
       payload.meta = meta;
     }
